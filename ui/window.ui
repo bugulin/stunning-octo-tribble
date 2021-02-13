@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <template class="AppWindow" parent="GtkApplicationWindow">
+    <property name="can-focus">False</property>
+    <property name="window-position">center</property>
+    <property name="default-width">640</property>
+    <property name="default-height">480</property>
+    <signal name="destroy" handler="on_destroy" swapped="no"/>
+    <signal name="realize" handler="on_date_changed" object="calendar" swapped="no"/>
+    <child type="titlebar">
+      <object class="GtkHeaderBar">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="title" translatable="yes">Stunning OctoTribble</property>
+        <property name="show-close-button">True</property>
+        <child>
+          <object class="GtkToggleButton">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="active">True</property>
+            <signal name="toggled" handler="toggle_panel"/>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="icon-name">system-users-symbolic</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="date_button">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="always-show-image">True</property>
+            <signal name="clicked" handler="popup" object="date_popup" swapped="no"/>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="icon-name">calendar</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton">
+            <property name="label" translatable="yes">Uložit</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="action-name">app.save</property>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkMenuButton">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="popover">_menu</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="icon-name">open-menu-symbolic</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkPaned" id="paned">
+        <property name="visible">True</property>
+        <property name="can-focus">True</property>
+        <property name="position-set">True</property>
+        <child>
+          <object class="GtkBox" id="_workers_panel">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkTreeView" id="_workers_view">
+                <property name="width-request">200</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="headers-visible">False</property>
+                <property name="show-expanders">False</property>
+                <property name="activate-on-single-click">True</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection"/>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButtonBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="homogeneous">True</property>
+                <property name="layout-style">expand</property>
+                <property name="margin">5</property>
+                <child>
+                  <object class="GtkButton">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="action-name">app.create_worker</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="icon-name">value-increase-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="action-name">app.edit_worker</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="icon-name">edit-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="resize">False</property>
+            <property name="shrink">False</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="shadow-type">in</property>
+            <property name="propagate-natural-width">True</property>
+            <property name="propagate-natural-height">True</property>
+            <child>
+              <object class="GtkViewport" id="_viewport">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="resize">True</property>
+            <property name="shrink">False</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </template>
+  <object class="GtkPopoverMenu" id="_menu">
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="margin">10</property>
+        <child>
+          <object class="GtkModelButton">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="receives-default">False</property>
+            <property name="action-name">app.about</property>
+            <property name="text" translatable="yes">O aplikaci</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkPopover" id="date_popup">
+    <property name="can-focus">False</property>
+    <property name="relative-to">date_button</property>
+    <child>
+      <object class="GtkCalendar" id="calendar">
+        <property name="visible">True</property>
+        <property name="can-focus">True</property>
+        <signal name="day-selected-double-click" handler="popdown" object="date_popup" swapped="no"/>
+        <signal name="month-changed" handler="on_date_changed"/>
+      </object>
+    </child>
+  </object>
+</interface>
