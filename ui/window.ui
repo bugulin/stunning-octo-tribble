@@ -54,7 +54,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton">
+          <object class="GtkButton" id="_button_save">
             <property name="label" translatable="yes">Uložit</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
@@ -99,15 +99,25 @@
             <property name="can-focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkTreeView" id="_workers_view">
+              <object class="GtkScrolledWindow">
                 <property name="width-request">200</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="headers-visible">False</property>
-                <property name="show-expanders">False</property>
-                <property name="activate-on-single-click">True</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection"/>
+                <property name="shadow-type">in</property>
+                <property name="propagate-natural-width">True</property>
+                <property name="propagate-natural-height">True</property>
+                <property name="vexpand">True</property>
+                <child>
+                  <object class="GtkTreeView" id="_workers_view">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="headers-visible">True</property>
+                    <property name="show-expanders">False</property>
+                    <property name="activate-on-single-click">True</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection"/>
+                    </child>
+                  </object>
                 </child>
               </object>
               <packing>
@@ -129,6 +139,7 @@
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="action-name">app.create_worker</property>
+                    <property name="tooltip-text" translatable="yes">Vytvořit nového pracovníka</property>
                     <child>
                       <object class="GtkImage">
                         <property name="visible">True</property>
@@ -149,6 +160,7 @@
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
                     <property name="action-name">app.edit_worker</property>
+                    <property name="tooltip-text" translatable="yes">Upravit vybraného pracovníka</property>
                     <child>
                       <object class="GtkImage">
                         <property name="visible">True</property>
@@ -183,6 +195,7 @@
             <property name="shadow-type">in</property>
             <property name="propagate-natural-width">True</property>
             <property name="propagate-natural-height">True</property>
+            <property name="width-request">400</property>
             <child>
               <object class="GtkViewport" id="_viewport">
                 <property name="visible">True</property>

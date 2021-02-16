@@ -1,98 +1,38 @@
 import sqlite3
-from abc import ABC, abstractmethod
+from gi.repository import GObject
 
 
-class SQL_Table(ABC):
-    '''Abstraktní třída na správu SQL tabulky'''
-
-    def __init__(self, db):
-        self.execute = db.c.execute
-
-    @abstractmethod
-    def all(self):
-        '''Vrátí všechny záznamy v tabulce.'''
-        pass
-
-    @abstractmethod
-    def create(self, *args):
-        '''Vytvoří nový záznam v tabulce.'''
-        pass
-
-    @abstractmethod
-    def get(self, uid):
-        '''Vrátí záznam s daným identifikátorem.'''
-        pass
-
-    @abstractmethod
-    def update(self, uid, *args):
-        '''Aktualizuje záznam s daným identifikátorem.'''
-        pass
-
-    @abstractmethod
-    def remove(self, uid):
-        '''Smaže daný záznam z tabulky.'''
-        pass
-
-
-class EmployeeManager(SQL_Table):
-    '''Třída na správu zaměstnanců v SQL databázi'''
-
-    scheme = '''users (
-        id         INTEGER PRIMARY KEY AUTOINCREMENT,
-        first_name VARCHAR(255),
-        last_name  VARCHAR(255) NOT NULL
-    )'''
-
-    def all(self) -> sqlite3.Cursor:
-        return self.execute('''
-            SELECT id, first_name, last_name FROM users;
-        ''')
-
-    def create(self, first_name: str, last_name: str):
-        self.execute('''
-            INSERT INTO users (first_name,last_name)
-            VALUES (?,?);
-        ''', (first_name, last_name))
-
-    def get(self, uid: int) -> sqlite3.Cursor:
-        return self.execute('''
-            SELECT * FROM users WHERE id=?;
-        ''', (uid,))
-
-    def update(self, uid: int, first_name: str, last_name: str):
-        self.execute('''
-            UPDATE users
-            SET first_name = ?, last_name = ?
-            WHERE id=?
-        ''', (first_name, last_name, uid))
-
-    def remove(self, uid: int):
-        self.execute('''
-            DELETE FROM users WHERE ID=?
-        ''', (uid,))
-
-
-class Database:
+class Database(GObject.GObject):
     '''Třída implementující komunikaci s SQLite databází'''
 
+    _managers = []
+
+    saved = GObject.Property(type=bool, default=True)
+
     def __init__(self, db_path: str):
-        self.conn = sqlite3.connect(db_path)
-        self.c = self.conn.cursor()
+        super().__init__()
+        self._conn = sqlite3.connect(db_path)
+        self._conn.set_trace_callback(self.debug)
 
-        self.employees = EmployeeManager(self)
+    def debug(self, statement):
+        print('\x1b[1m[s]\x1b[0m', statement)
 
-    def create_schema(self):
+    def create_schemes(self):
         # TODO: create index
-        self.c.executescript(f'''
-            CREATE TABLE {self.employees.scheme};
-        ''')
+        for manager in self._managers:
+            self._conn.executescript(
+                f'CREATE TABLE {manager.scheme};'
+            )
+
+    def register(self, klass):
+        manager = klass(self, self._conn.cursor())
+        setattr(self, manager.table_name, manager)
+        self._managers.append(manager)
 
     def save(self):
-        self.conn.commit()
+        self.saved = True
+        self._conn.commit()
 
     def quit(self):
-        self.save()
-        self.conn.close()
-
-    def __del__(self):
-        self.quit()
+        print('\x1b[1m[i]\x1b[0m', 'Closing db connection')
+        self._conn.close()
