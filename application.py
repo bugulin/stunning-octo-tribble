@@ -10,7 +10,6 @@ from managers import WorkerManager
 
 from window import AppWindow
 from widgets.aboutdialog import AboutDialog
-from widgets.workerdialog import WorkerDialog
 
 
 class OctoTribble(Gtk.Application):
@@ -26,7 +25,7 @@ class OctoTribble(Gtk.Application):
         self._window = None
         self.database = None
 
-    def setup_database(self):
+    def _setup_database(self):
         self.database = Database('db.sqlite3')
         self.database.register(WorkerManager)
 
@@ -37,7 +36,6 @@ class OctoTribble(Gtk.Application):
             ('about', self.on_about),
             ('save', self.on_save),
             ('quit', self.on_quit),
-            ('create_worker', self.on_create_worker),
         ]
 
         for action, callback in action_entries:
@@ -47,7 +45,7 @@ class OctoTribble(Gtk.Application):
 
     def do_activate(self):
         if not self._window:
-            self.setup_database()
+            self._setup_database()
             self._window = AppWindow(application=self)
 
         self._window.present()
@@ -62,14 +60,6 @@ class OctoTribble(Gtk.Application):
     def on_quit(self, action, param):
         self.database.quit()
         self.quit()
-
-    def on_create_worker(self, action, param):
-        worker_dialog = WorkerDialog(
-            transient_for=self._window, title='Vytvořit nový záznam'
-        )
-        response, worker = worker_dialog.present()
-        if response == Gtk.ResponseType.OK:
-            self.database.workers.create(**worker)
 
 
 if __name__ == '__main__':

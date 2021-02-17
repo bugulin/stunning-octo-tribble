@@ -30,9 +30,9 @@ class Database(GObject.GObject):
         self._managers.append(manager)
 
     def save(self):
-        self.saved = True
         self._conn.commit()
+        self.saved = True
 
     def quit(self):
-        print('\x1b[1m[i]\x1b[0m', 'Closing db connection')
+        print('\x1b[1m[d]\x1b[0m', 'Closing db connection')
         self._conn.close()

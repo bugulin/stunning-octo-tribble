@@ -89,100 +89,12 @@
       </object>
     </child>
     <child>
-      <object class="GtkPaned" id="paned">
+      <object class="GtkPaned">
         <property name="visible">True</property>
         <property name="can-focus">True</property>
         <property name="position-set">True</property>
         <child>
-          <object class="GtkBox" id="_workers_panel">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkScrolledWindow">
-                <property name="width-request">200</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="shadow-type">in</property>
-                <property name="propagate-natural-width">True</property>
-                <property name="propagate-natural-height">True</property>
-                <property name="vexpand">True</property>
-                <child>
-                  <object class="GtkTreeView" id="_workers_view">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="headers-visible">True</property>
-                    <property name="show-expanders">False</property>
-                    <property name="activate-on-single-click">True</property>
-                    <child internal-child="selection">
-                      <object class="GtkTreeSelection"/>
-                    </child>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButtonBox">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="homogeneous">True</property>
-                <property name="layout-style">expand</property>
-                <property name="margin">5</property>
-                <child>
-                  <object class="GtkButton">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                    <property name="action-name">app.create_worker</property>
-                    <property name="tooltip-text" translatable="yes">Vytvořit nového pracovníka</property>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="icon-name">value-increase-symbolic</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                    <property name="action-name">app.edit_worker</property>
-                    <property name="tooltip-text" translatable="yes">Upravit vybraného pracovníka</property>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="icon-name">edit-symbolic</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
+          <object class="WorkersView" id="_workers_view"/>
           <packing>
             <property name="resize">False</property>
             <property name="shrink">False</property>

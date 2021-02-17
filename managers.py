@@ -1,6 +1,5 @@
 import sqlite3
 from abc import ABC, abstractmethod
-from gi.repository import Gtk
 
 
 class Manager(ABC):
@@ -31,10 +30,13 @@ class Manager(ABC):
         '''Vytvoří nový záznam v tabulce.'''
         pass
 
-    @abstractmethod
-    def get(self, uid):
+    def get(self, uid: int, cols: str='*') -> sqlite3.Cursor:
         '''Vrátí záznam s daným identifikátorem.'''
-        pass
+
+        return self.execute(
+            f'SELECT {cols} FROM {self.table_name} WHERE id=?;',
+            (uid,),
+        )
 
     @abstractmethod
     def update(self, uid, **kwargs):
@@ -45,8 +47,9 @@ class Manager(ABC):
         '''Smaže daný záznam z tabulky.'''
 
         self.execute(
-            'DELETE FROM {self.table_name} WHERE ID=?',
-            (uid,), safe=False
+            f'DELETE FROM {self.table_name} WHERE ID=?',
+            (uid,),
+            safe=False,
         )
 
 
@@ -54,7 +57,6 @@ class WorkerManager(Manager):
     '''Třída na správu zaměstnanců v SQL databázi'''
 
     table_name = 'workers'
-
     scheme = (
         'workers (\n'
         '    id         INTEGER PRIMARY KEY AUTOINCREMENT,\n'
@@ -63,39 +65,21 @@ class WorkerManager(Manager):
         ')'
     )
 
-    def __init__(self, *args):
-        super().__init__(*args)
-        self.store = Gtk.ListStore(int, str, str)
-        self.reload()
-
-    def reload(self):
-        self.store.clear()
-        for worker in self.all():
-            self.store.append(worker)
-
     def create(self, first_name: str, last_name: str) -> int:
         cursor = self.execute(
             'INSERT INTO workers (first_name,last_name) '
             'VALUES (?,?);',
             (first_name, last_name),
-            safe=False
+            safe=False,
         )
 
-        worker = cursor.lastrowid
-        self.store.append(self.get(worker))
-
-    def get(self, uid: int) -> sqlite3.Cursor:
-        return self.execute(
-            'SELECT * FROM workers WHERE id=?;',
-            (uid,)
-        ).fetchone()
+        return cursor.lastrowid
 
     def update(self, uid: int, first_name: str, last_name: str):
         self.execute(
             'UPDATE workers '
-            'SET first_name = ?, last_name = ? '
+            'SET first_name=?, last_name=? '
             'WHERE id=?',
             (first_name, last_name, uid),
-            safe=False
+            safe=False,
         )
-
