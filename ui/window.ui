@@ -7,7 +7,6 @@
     <property name="default-width">640</property>
     <property name="default-height">480</property>
     <signal name="destroy" handler="on_destroy" swapped="no"/>
-    <signal name="realize" handler="on_date_changed" object="calendar" swapped="no"/>
     <child type="titlebar">
       <object class="GtkHeaderBar">
         <property name="visible">True</property>
@@ -40,7 +39,7 @@
             <property name="focus-on-click">False</property>
             <property name="receives-default">True</property>
             <property name="always-show-image">True</property>
-            <signal name="clicked" handler="popup" object="date_popup" swapped="no"/>
+            <signal name="clicked" handler="on_choose_month" swapped="no"/>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
@@ -147,16 +146,7 @@
       </object>
     </child>
   </object>
-  <object class="GtkPopover" id="date_popup">
-    <property name="can-focus">False</property>
+  <object class="MonthChooser" id="_month_chooser">
     <property name="relative-to">date_button</property>
-    <child>
-      <object class="GtkCalendar" id="calendar">
-        <property name="visible">True</property>
-        <property name="can-focus">True</property>
-        <signal name="day-selected-double-click" handler="popdown" object="date_popup" swapped="no"/>
-        <signal name="month-changed" handler="on_date_changed"/>
-      </object>
-    </child>
   </object>
 </interface>

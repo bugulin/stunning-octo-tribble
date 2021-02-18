@@ -1,6 +1,8 @@
 from gi.repository import Gtk
 
-from widgets.workersview import WorkersView  # Used in UI template
+# Widgets used in UI template
+from widgets.workersview import WorkersView
+from widgets.monthchooser import MonthChooser
 
 
 @Gtk.Template(filename='ui/window.ui')
@@ -10,13 +12,13 @@ class AppWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'AppWindow'
 
     _button_save = Gtk.Template.Child()
+    _month_chooser = Gtk.Template.Child()
     _viewport = Gtk.Template.Child()
     _workers_view = Gtk.Template.Child()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Setup bindings to database
         db = self.props.application.database
         self.update_status(db)
         db.connect('notify::saved', self.update_status)
@@ -29,17 +31,8 @@ class AppWindow(Gtk.ApplicationWindow):
         self._button_save.set_sensitive(not db.saved)
 
     @Gtk.Template.Callback()
-    def on_date_changed(self, calendar):
-        date = calendar.get_date()
-        # TODO: .set_property('date', (date.year, date.month))
-
-    @Gtk.Template.Callback()
-    def popup(self, widget):
-        widget.popup()
-
-    @Gtk.Template.Callback()
-    def popdown(self, widget):
-        widget.popdown()
+    def on_choose_month(self, widget):
+        self._month_chooser.run()
 
     @Gtk.Template.Callback()
     def toggle_panel(self, button):
