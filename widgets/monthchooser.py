@@ -7,7 +7,12 @@ class MonthChooser(Gtk.Popover):
 
     __gtype_name__ = 'MonthChooser'
 
-    _date = (0, 0)  # GObject.Property: (year, month)
+    __gsignals__ = {
+        'reload': (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
+
+    _calendar = Gtk.Template.Child()
+    _date = (-1, -1)  # GObject.Property: (year, month)
 
     @GObject.Property
     def current_date(self):
@@ -20,10 +25,13 @@ class MonthChooser(Gtk.Popover):
     def run(self):
         self.popup()
 
+    def do_reload(self):
+        self._calendar.emit('month-changed')
+
     @Gtk.Template.Callback()
     def on_date_changed(self, calendar):
         date = calendar.get_date()
-        self.set_property('current_date', (date.year, date.month))
+        self.set_property('current-date', (date.year, date.month))
 
     @Gtk.Template.Callback()
     def close(self, widget):

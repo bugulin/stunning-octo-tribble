@@ -100,24 +100,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkScrolledWindow">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="shadow-type">in</property>
-            <property name="propagate-natural-width">True</property>
-            <property name="propagate-natural-height">True</property>
-            <property name="width-request">400</property>
-            <child>
-              <object class="GtkViewport" id="_viewport">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="resize">True</property>
-            <property name="shrink">False</property>
-          </packing>
+          <object class="Workspace" id="_workspace"/>
         </child>
       </object>
     </child>

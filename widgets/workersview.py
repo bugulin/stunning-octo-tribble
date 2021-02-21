@@ -8,6 +8,10 @@ class WorkersView(Gtk.Box):
 
     __gtype_name__ = 'WorkersView'
 
+    __gsignals__ = {
+        'reload': (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
+
     _button_edit = Gtk.Template.Child()
     _button_remove = Gtk.Template.Child()
     _selection = Gtk.Template.Child()
@@ -15,11 +19,16 @@ class WorkersView(Gtk.Box):
 
     current_worker = GObject.Property(type=int, default=-1)
 
-    def connect_to(self, manager):
-        self._workers = manager
-        self.reload()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.connect('realize', self._set_workers)
 
-    def reload(self):
+    def _set_workers(self, widget):
+        db = self.get_toplevel().get_application().database
+        self._workers = db.workers
+        self.emit('reload')
+
+    def do_reload(self):
         self._store.clear()
         for worker in self._workers.all():
             self._store.append((worker[0], '{1} {2}'.format(*worker)))

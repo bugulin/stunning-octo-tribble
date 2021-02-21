@@ -3,6 +3,7 @@ from gi.repository import Gtk
 # Widgets used in UI template
 from widgets.workersview import WorkersView
 from widgets.monthchooser import MonthChooser
+from widgets.workspace import Workspace
 
 
 @Gtk.Template(filename='ui/window.ui')
@@ -13,8 +14,8 @@ class AppWindow(Gtk.ApplicationWindow):
 
     _button_save = Gtk.Template.Child()
     _month_chooser = Gtk.Template.Child()
-    _viewport = Gtk.Template.Child()
     _workers_view = Gtk.Template.Child()
+    _workspace = Gtk.Template.Child()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -22,7 +23,10 @@ class AppWindow(Gtk.ApplicationWindow):
         db = self.props.application.database
         self.update_status(db)
         db.connect('notify::saved', self.update_status)
-        self._workers_view.connect_to(db.workers)
+
+        self._workers_view.connect('notify::current-worker', self._workspace.update)
+        self._month_chooser.connect('notify::current-date', self._workspace.update)
+        self._month_chooser.emit('reload')
 
         self.show_all()
 
