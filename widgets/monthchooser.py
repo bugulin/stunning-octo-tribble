@@ -1,3 +1,4 @@
+from datetime import MINYEAR, MAXYEAR
 from gi.repository import Gtk, GObject
 
 
@@ -31,7 +32,12 @@ class MonthChooser(Gtk.Popover):
     @Gtk.Template.Callback()
     def on_date_changed(self, calendar):
         date = calendar.get_date()
-        self.set_property('current-date', (date.year, date.month))
+        if date.year < MINYEAR or date.year >= MAXYEAR:
+            return calendar.select_month(
+                date.month,
+                MINYEAR + (date.year - MINYEAR) % (MAXYEAR - MINYEAR)
+            )
+        self.set_property('current-date', (date.year, date.month+1))
 
     @Gtk.Template.Callback()
     def close(self, widget):

@@ -3,7 +3,7 @@ import sys
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio
+from gi.repository import Gtk, Gdk, Gio
 
 from database import Database
 from managers import WorkerManager
@@ -42,6 +42,12 @@ class OctoTribble(Gtk.Application):
             sa = Gio.SimpleAction.new(action, None)
             sa.connect('activate', callback)
             self.add_action(sa)
+
+        css = Gtk.CssProvider()
+        css.load_from_path('data/theme.css')
+        style = Gtk.StyleContext()
+        style.add_provider_for_screen(Gdk.Screen.get_default(), css,
+                Gtk.STYLE_PROVIDER_PRIORITY_USER)
 
     def do_activate(self):
         if not self._window:

@@ -1,0 +1,22 @@
+label.large {
+  font-size: larger;
+  font-weight: bold;
+}
+
+label.strong {
+  color: @theme_selected_bg_color;
+}
+
+.drawing {
+  border-color: alpha(@theme_fg_color, .8);
+  color: @theme_fg_color;
+  font-size: 1.2rem;
+}
+
+#day-numbers {
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+#day-numbers overshoot {
+  background: none;
+}
