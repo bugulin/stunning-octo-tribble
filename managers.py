@@ -1,5 +1,6 @@
 import sqlite3
 from abc import ABC, abstractmethod
+from enum import IntEnum
 
 
 class Manager(ABC):
@@ -28,7 +29,6 @@ class Manager(ABC):
     @abstractmethod
     def create(self, **kwargs):
         '''Vytvoří nový záznam v tabulce.'''
-        pass
 
     def get(self, uid: int, cols: str='*') -> sqlite3.Cursor:
         '''Vrátí záznam s daným identifikátorem.'''
@@ -41,7 +41,6 @@ class Manager(ABC):
     @abstractmethod
     def update(self, uid, **kwargs):
         '''Aktualizuje daný záznam.'''
-        pass
 
     def remove(self, uid: int):
         '''Smaže daný záznam z tabulky.'''
@@ -82,4 +81,67 @@ class WorkerManager(Manager):
             'WHERE id=?',
             (first_name, last_name, uid),
             safe=False,
+        )
+
+
+class EventManager(Manager):
+    '''Třída na správu událostí v SQL databázi'''
+
+    table_name = 'events'
+    scheme = (
+        'events (\n'
+        '    id         INTEGER PRIMARY KEY AUTOINCREMENT,\n'
+        '    type       INTEGER NOT NULL,\n'
+        '    start      DATETIME NOT NULL,\n'
+        '    duration   INTEGER NOT NULL,\n'
+        '    worker_id  INTEGER NOT NULL,\n'
+        '    FOREIGN KEY (worker_id)\n'
+        '        REFERENCES workers (id)\n'
+        '        ON UPDATE CASCADE\n'
+        '        ON DELETE CASCADE\n'
+        ')'
+    )
+
+    class EventTypes(IntEnum):
+        WORK = 1
+        VACATION = 2
+        SICKNESS = 3
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Kontrola podpory 'foreign_keys' v sqlite (od verze 3.6.19)
+        if self.execute('PRAGMA foreign_keys;').fetchone()[0] == 0:
+            self.execute('PRAGMA foreign_keys = ON;')
+            assert self.execute('PRAGMA foreign_keys;').fetchone()[0] == 1, \
+                'nepodporovaná verze SQLite'
+
+    def create(self, typ: EventTypes, start: str, duration: int, worker_id: int) -> int:
+        cursor = self.execute(
+            'INSERT INTO events (type,start,duration,worker_id) '
+            'VALUES (?,?,?,?);',
+            (typ, start, duration, worker_id),
+            safe=False,
+        )
+
+        return cursor.lastrowid
+
+    def update(self, uid: int, typ: int, start: str, duration: int):
+        self.execute(
+            'UPDATE events '
+            'SET type=?, start=?, duration=?'
+            'WHERE id=?',
+            (typ, start, duration, uid),
+            safe=False,
+        )
+
+    def select(self, year: int, month: int, cols: str='*') -> sqlite3.Cursor:
+        '''Vrátí všechny události v daný měsíc.'''
+        year = '{:04d}'.format(year)
+        month = '{:02d}'.format(month)
+
+        return self.execute(
+            f'SELECT {cols} FROM events '
+            'WHERE strftime(\'%Y\', start)=? AND strftime(\'%m\', start)=?;',
+            (year, month),
         )

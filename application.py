@@ -6,7 +6,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, Gio
 
 from database import Database
-from managers import WorkerManager
+from managers import WorkerManager, EventManager
 
 from window import AppWindow
 from widgets.aboutdialog import AboutDialog
@@ -28,6 +28,8 @@ class OctoTribble(Gtk.Application):
     def _setup_database(self):
         self.database = Database('db.sqlite3')
         self.database.register(WorkerManager)
+        self.database.register(EventManager)
+        #self.database.create_schemes()
 
     def do_startup(self):
         Gtk.Application.do_startup(self)

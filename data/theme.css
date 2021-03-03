@@ -4,7 +4,7 @@ label.large {
 }
 
 label.strong {
-  color: @theme_selected_bg_color;
+  color: @selected_bg_color;
 }
 
 .drawing {
@@ -14,7 +14,7 @@ label.strong {
 }
 
 #day-numbers {
-  border-top: 1px solid rgba(0, 0, 0, 0.15);
+  border-right: none;
 }
 
 #day-numbers overshoot {

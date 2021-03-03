@@ -72,6 +72,7 @@
                 <property name="name">day-numbers</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
+                <property name="shadow-type">in</property>
                 <property name="vexpand">True</property>
                 <property name="hscrollbar-policy">GTK_POLICY_NEVER</property>
                 <property name="vscrollbar-policy">GTK_POLICY_EXTERNAL</property>
