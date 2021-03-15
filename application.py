@@ -10,6 +10,7 @@ from managers import WorkerManager, EventManager
 
 from window import AppWindow
 from widgets.aboutdialog import AboutDialog
+from modules.exporter import Exporter
 
 
 class OctoTribble(Gtk.Application):
@@ -36,6 +37,7 @@ class OctoTribble(Gtk.Application):
 
         action_entries = [
             ('about', self.on_about),
+            ('export', self.on_export),
             ('reload', self.on_reload),
             ('save', self.on_save),
             ('quit', self.on_quit),
@@ -62,6 +64,11 @@ class OctoTribble(Gtk.Application):
     def on_about(self, action, param):
         about_dialog = AboutDialog(transient_for=self._window)
         about_dialog.present()
+
+    def on_export(self, action, param):
+        export_dialog = Exporter(
+            transient_for=self._window, **self._window.get_view())
+        export_dialog.present()
 
     def on_reload(self, action, param):
         self.database.rollback()

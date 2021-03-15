@@ -42,6 +42,13 @@ class AppWindow(Gtk.ApplicationWindow):
         self._workers_view.emit('reload')
         self._workspace.emit('reload')
 
+    def get_view(self):
+        '''Vrátí aktuální pohled'''
+
+        worker = self._workers_view.current_worker
+        date = self._month_chooser.current_date
+        return {'worker_id': worker, 'date': date}
+
     @Gtk.Template.Callback()
     def on_choose_month(self, widget):
         self._month_chooser.run()

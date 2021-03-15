@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <template class="Exporter" parent="GtkDialog">
+    <property name="destroy-with-parent">True</property>
+    <property name="modal">True</property>
+    <property name="resizable">True</property>
+    <property name="title">Export dat</property>
+    <property name="type-hint">dialog</property>
+    <property name="window-position">center-on-parent</property>
+    <signal name="response" handler="on_response"/>
+    <child type="action">
+      <object class="GtkButton" id="cancel">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Zrušit</property>
+        <style>
+          <class name="action"/>
+        </style>
+      </object>
+    </child>
+    <child type="action">
+      <object class="GtkButton" id="_ok_button">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Exportovat</property>
+        <property name="can-default">True</property>
+        <style>
+          <class name="action"/>
+          <class name="suggested-action"/>
+        </style>
+      </object>
+    </child>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkGrid">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="row-spacing">5</property>
+            <property name="row-homogeneous">True</property>
+            <property name="column-spacing">10</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Formát:</property>
+                <property name="xalign">0</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBoxText">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="active">0</property>
+                <property name="hexpand">True</property>
+                <items>
+                  <item id="csv">csv</item>
+                </items>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Výstupní soubor:</property>
+                <property name="xalign">0</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="relief">half</property>
+                <signal name="clicked" handler="on_file_choose"/>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="spacing">5</property>
+                    <child>
+                      <object class="GtkLabel" id="_filename">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="ellipsize">start</property>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child> 
+                      <object class="GtkImage">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="icon-name">filesaveas</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property> 
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkProgressBar" id="_progress">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="show-text">True</property>
+                <property name="text" translatable="yes"></property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+                <property name="width">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="cancel">cancel</action-widget>
+      <action-widget response="ok" default="true">_ok_button</action-widget>
+    </action-widgets>
+  </template>
+</interface>

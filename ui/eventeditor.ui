@@ -178,6 +178,7 @@
             <property name="receives-default">True</property>
             <signal name="clicked" handler="on_delete"/>
             <style>
+              <class name="action"/>
               <class name="destructive-action"/>
             </style>
           </object>
@@ -194,6 +195,7 @@
             <property name="receives-default">True</property>
             <signal name="clicked" handler="on_save"/>
             <style>
+              <class name="action"/>
               <class name="suggested-action"/>
             </style>
           </object>

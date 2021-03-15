@@ -21,6 +21,14 @@ label.strong {
   background: none;
 }
 
-popover button.destructive-action, popover button.suggested-action {
-  margin-top: 10px;
+dialog > box {
+  margin: 10px;
+}
+
+button.action {
+  margin: 10px 5px 0 0;
+}
+
+button.action:last-child {
+  margin-right: 0;
 }
