@@ -20,3 +20,7 @@ label.strong {
 #day-numbers overshoot {
   background: none;
 }
+
+popover button.destructive-action, popover button.suggested-action {
+  margin-top: 10px;
+}

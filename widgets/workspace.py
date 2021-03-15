@@ -1,10 +1,25 @@
 import cairo
-from datetime import date
+from datetime import date, datetime
 
-from gi.repository import Gtk, GObject, Pango
+from gi.repository import Gtk, Gdk, GObject, Pango
 
+from .eventeditor import EventEditor
+
+
+BORDER_RADIUS = 5
+
+EVENT_COLORS = [
+    None,
+    (0.23, 0.47, 0.81, 1),
+    (0.17, 0.71, 0.52, 1),
+    (0.72, 0.15, 0.15, 1),
+]
+
+EVENT_TITLES = [None, 'Práce', 'Dovolená', 'Nemoc']
 
 MIN_DAY_HEIGHT = 40
+
+PI = 3.141592653589793
 
 
 @Gtk.Template(filename='ui/workspace.ui')
@@ -27,9 +42,11 @@ class Workspace(Gtk.Stack):
     _date = (-1, -1)
     _day_count = 0
     _worker = -1
+    _events = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._drawing_area.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
         self.connect('realize', self._set_database)
 
     def _set_database(self, widget):
@@ -56,6 +73,18 @@ class Workspace(Gtk.Stack):
         self._day_count = (next_month - month).days
         self._label_right.set_text(month.strftime('%B %Y'))
 
+        # Načtení událostí
+        self._events = [[] for _ in range(self._day_count)]
+        events = self._database.events.select(
+            self._worker, *self._date, 'id, type, start, duration'
+        )
+        for event in events:
+            d = datetime.fromisoformat(event[2])
+            self._events[d.day-1].append([
+                event[0], event[1], d.day, d.hour*60 + d.minute, event[3]
+            ])
+
+        # Překreslení
         self._drawing_area.queue_draw()
         self._panel.queue_draw()
 
@@ -73,6 +102,83 @@ class Workspace(Gtk.Stack):
             raise AttributeError('unknown property \'{}\''.format(prop))
 
         self.emit('reload')
+
+    def update_event(self, status, event):
+        '''Callback z EventEditoru pro upravení události'''
+
+        if status == 'delete':
+            self._database.events.remove(event[0])
+            self._events[event[2]-1].remove(event)
+        elif status == 'save':
+            start = datetime(
+                *self._date, event[2],
+                *divmod(event[3], 60)
+            )
+            if event[0] == -1:
+                uid = self._database.events.create(
+                    typ=event[1],
+                    start=start,
+                    duration=event[4],
+                    worker_id=self._worker
+                )
+                event[0] = uid
+                self._events[event[2]-1].append(event)
+            else:
+                self._database.events.update(
+                    uid=event[0],
+                    typ=event[1],
+                    start=start,
+                    duration=event[4],
+                )
+        self._drawing_area.queue_draw()
+
+    def _draw_event(self, ctx, event, day_height, hour_width):
+        uid, typ, day, start, duration = event
+
+        x = start * hour_width / 60
+        y = (day - 1) * day_height + 1
+        w = duration * hour_width / 60
+        h = day_height - 3
+
+        ctx.set_line_width(1)
+
+        # Vypočítání souřadnic
+        left = x + BORDER_RADIUS
+        right = x + w - BORDER_RADIUS
+        top = y + BORDER_RADIUS
+        bottom = y + h - BORDER_RADIUS
+
+        # Nakreslení rámečku
+        ctx.set_source_rgba(*EVENT_COLORS[typ])
+        ctx.new_path()
+        ctx.arc(left,  top,    BORDER_RADIUS, PI, PI*3/2)
+        ctx.arc(right, top,    BORDER_RADIUS, PI*3/2, 0)
+        ctx.arc(right, bottom, BORDER_RADIUS, 0, PI/2)
+        ctx.arc(left,  bottom, BORDER_RADIUS, PI/2, PI)
+        ctx.close_path()
+        ctx.fill()
+
+        ctx.set_source_rgba(1, 1, 1, 0.8)
+
+        # Zobrazení popisku
+        ctx.save()
+        ctx.select_font_face(
+            'sans-serif', cairo.FontSlant.NORMAL, cairo.FontWeight.BOLD)
+        text = EVENT_TITLES[typ]
+        exts = ctx.text_extents(text)
+        ctx.move_to(x + (w - exts.width) / 2, y + h/2 - 2)
+        ctx.show_text(text)
+        ctx.stroke()
+        ctx.restore()
+
+        # Zobrazení časového intervalu
+        end = start + duration
+        text = '{}:{:02d} \u2013 {}:{:02d}'.format(
+            *divmod(start, 60), *divmod(end, 60))
+        exts = ctx.text_extents(text)
+        ctx.move_to(x + (w - exts.width) / 2, y + h/2 + 2 + exts.height)
+        ctx.show_text(text)
+        ctx.stroke()
 
     @Gtk.Template.Callback()
     def on_draw_numbers(self, area, ctx):
@@ -149,14 +255,15 @@ class Workspace(Gtk.Stack):
         area.set_size_request(1200, self._day_count * MIN_DAY_HEIGHT)
         width = area.get_allocated_width()
         height = area.get_allocated_height()
-        day_height = height / self._day_count
         hour_width = width / 24
+        day_height = height / self._day_count
 
         # Načtení vlastností z CSS stylů
         style = area.get_style_context()
         color = style.get_border_color(area.get_state())
 
         # Řádkování po dnech
+        ctx.save()
         ctx.set_line_width(0.25)
         ctx.set_source_rgba(*color)
         for i in range(1, self._day_count):
@@ -172,3 +279,43 @@ class Workspace(Gtk.Stack):
             ctx.move_to(x, 0)
             ctx.line_to(x, height)
             ctx.stroke()
+        ctx.restore()
+
+        # Vykreslení událostí
+        for events in self._events:
+            for event in events:
+                self._draw_event(ctx, event, day_height, hour_width)
+
+    @Gtk.Template.Callback()
+    def on_click(self, widget, event):
+        # Získání rozměrů
+        width = widget.get_allocated_width()
+        height = widget.get_allocated_height()
+        day_height = height / self._day_count
+        hour_width = width / 24
+
+        # Určení pozice kliknutí
+        day = int(event.y // day_height + 1)
+        hour = int(event.x // hour_width)
+        t = hour*60 + 30
+
+        # Nalezení odpovídající události nebo vytvoření nové
+        event = None
+        for e in self._events[day-1]:
+            _, _, _, start, duration = e
+            if (t - start) > 0 and (start + duration - t) > 0:
+                event = e
+                break
+        else:
+            event = [-1, 1, day, hour*60, 60]
+
+        # Vyskakovací okno a jeho umístění
+        rect = Gdk.Rectangle()
+        rect.width = event[4] * hour_width / 60
+        rect.height = day_height * 0.6
+        rect.x = event[3] * hour_width / 60
+        rect.y = (event[2] - 0.8) * day_height
+
+        p = EventEditor(relative_to=widget, callback=self.update_event)
+        p.set_pointing_to(rect)
+        p.popup(event, self._events[day-1])

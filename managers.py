@@ -130,18 +130,16 @@ class EventManager(Manager):
         self.execute(
             'UPDATE events '
             'SET type=?, start=?, duration=?'
-            'WHERE id=?',
+            'WHERE id=?;',
             (typ, start, duration, uid),
             safe=False,
         )
 
-    def select(self, year: int, month: int, cols: str='*') -> sqlite3.Cursor:
+    def select(self, worker_id: int, year: int, month: int, cols: str='*') -> sqlite3.Cursor:
         '''Vrátí všechny události v daný měsíc.'''
-        year = '{:04d}'.format(year)
-        month = '{:02d}'.format(month)
 
         return self.execute(
             f'SELECT {cols} FROM events '
-            'WHERE strftime(\'%Y\', start)=? AND strftime(\'%m\', start)=?;',
-            (year, month),
+            'WHERE worker_id=? AND DATE(start, \'start of month\')=?;',
+            (worker_id, f'{year:04d}-{month:02d}-01'),
         )
