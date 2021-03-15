@@ -29,6 +29,10 @@ class Database(GObject.GObject):
         setattr(self, manager.table_name, manager)
         self._managers.append(manager)
 
+    def rollback(self):
+        self._conn.rollback()
+        self.saved = True
+
     def save(self):
         self._conn.commit()
         self.saved = True

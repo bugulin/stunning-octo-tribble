@@ -31,8 +31,16 @@ class AppWindow(Gtk.ApplicationWindow):
         self.show_all()
 
     def update_status(self, db, gparam=None):
+        '''Deaktivuje tlačítko 'Uložit', pokud není co uložit'''
+
         print('\x1b[1m[i]\x1b[0m', 'Database saved:', db.saved)
         self._button_save.set_sensitive(not db.saved)
+
+    def reload_views(self):
+        '''Vyvolá znovunačtení dat z databáze u všech zobrazení'''
+
+        self._workers_view.emit('reload')
+        self._workspace.emit('reload')
 
     @Gtk.Template.Callback()
     def on_choose_month(self, widget):

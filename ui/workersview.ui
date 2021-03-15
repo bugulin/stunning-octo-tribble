@@ -27,10 +27,10 @@
             <property name="headers-visible">True</property>
             <property name="show-expanders">False</property>
             <property name="activate-on-single-click">True</property>
+            <property name="enable-search">True</property>
+            <property name="search-column">1</property>
             <child internal-child="selection">
-              <object class="GtkTreeSelection" id="_selection">
-                <signal name="changed" handler="on_selection_changed"/>
-              </object>
+              <object class="GtkTreeSelection" id="_selection"/>
             </child>
             <child>
               <object class="GtkTreeViewColumn">

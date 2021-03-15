@@ -22,6 +22,7 @@ class WorkersView(Gtk.Box):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.connect('realize', self._set_workers)
+        self._handler_id = self._selection.connect('changed', self.on_selection_changed)
 
     def _set_workers(self, widget):
         db = self.get_toplevel().get_application().database
@@ -29,9 +30,11 @@ class WorkersView(Gtk.Box):
         self.emit('reload')
 
     def do_reload(self):
-        self._store.clear()
-        for worker in self._workers.all():
-            self._store.append((worker[0], '{1} {2}'.format(*worker)))
+        with self._selection.handler_block(self._handler_id):
+            self._store.clear()
+            for worker in self._workers.all():
+                self._store.append((worker[0], '{2} {1}'.format(*worker)))
+        self._selection.emit('changed')
 
     @Gtk.Template.Callback()
     def on_create_worker(self, button):
@@ -75,7 +78,6 @@ class WorkersView(Gtk.Box):
         self._selection.unselect_all()
         self.current_worker = -1
 
-    @Gtk.Template.Callback()
     def on_selection_changed(self, selection):
         model, treeiter = selection.get_selected()
         print('\x1b[1m[w]\x1b[0m', 'Selection changed to', treeiter)
