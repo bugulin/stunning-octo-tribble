@@ -44,7 +44,7 @@ class Exporter(Gtk.Dialog):
             for i, event in enumerate(events):
                 start = datetime.fromisoformat(event[0])
                 f.write('{},{},{:02d}:{:02d},{}\n'.format(
-                    start.strftime('%x'), start.strftime('%H:%M'),
+                    start.strftime('%Y-%m-%d'), start.strftime('%H:%M'),
                     *divmod(event[1], 60), event[2],
                 ))
 

@@ -19,6 +19,11 @@ EVENT_TITLES = [None, 'Práce', 'Dovolená', 'Nemoc']
 
 MIN_DAY_HEIGHT = 40
 
+MONTHS = (
+    'Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen',
+    'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec'
+)
+
 PI = 3.141592653589793
 
 
@@ -46,7 +51,6 @@ class Workspace(Gtk.Stack):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._drawing_area.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
         self.connect('realize', self._set_database)
 
     def _set_database(self, widget):
@@ -66,12 +70,13 @@ class Workspace(Gtk.Stack):
         worker = self._database.workers.get(
                 self._worker, 'first_name, last_name').fetchone()
         self._label_left.set_text('{} {}'.format(*worker))
+        self._label_right.set_text('{} {}'.format(
+            MONTHS[self._date[1] - 1], self._date[0]))
 
         month = date(self._date[0], self._date[1], 1)
         next_month = month.replace(month=self._date[1]+1) if month.month < 12 \
             else date(self._date[0]+1, 1, 1)
         self._day_count = (next_month - month).days
-        self._label_right.set_text(month.strftime('%B %Y'))
 
         # Načtení událostí
         self._events = [[] for _ in range(self._day_count)]

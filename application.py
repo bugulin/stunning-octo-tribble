@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import sys
 
 import gi
@@ -11,6 +12,9 @@ from managers import WorkerManager, EventManager
 from window import AppWindow
 from widgets.aboutdialog import AboutDialog
 from modules.exporter import Exporter
+
+
+DB_PATH = 'db.sqlite3'
 
 
 class OctoTribble(Gtk.Application):
@@ -27,10 +31,17 @@ class OctoTribble(Gtk.Application):
         self.database = None
 
     def _setup_database(self):
+        create_schemes = False
+        if not os.path.isfile(DB_PATH):
+            create_schemes = True
+
         self.database = Database('db.sqlite3')
         self.database.register(WorkerManager)
         self.database.register(EventManager)
-        #self.database.create_schemes()
+
+        # Vytvoření tabulek, pokud neexistují
+        if create_schemes:
+            self.database.create_schemes()
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
@@ -51,8 +62,8 @@ class OctoTribble(Gtk.Application):
         css = Gtk.CssProvider()
         css.load_from_path('data/theme.css')
         style = Gtk.StyleContext()
-        style.add_provider_for_screen(Gdk.Screen.get_default(), css,
-                Gtk.STYLE_PROVIDER_PRIORITY_USER)
+        style.add_provider_for_screen(
+            Gdk.Screen.get_default(), css, Gtk.STYLE_PROVIDER_PRIORITY_USER)
 
     def do_activate(self):
         if not self._window:

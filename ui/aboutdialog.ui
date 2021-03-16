@@ -12,5 +12,6 @@
     <property name="authors">Petr Borňás</property>
     <property name="logo-icon-name">calendar</property>
     <property name="license-type">gpl-3-0</property>
+    <signal name="response" handler="on_response"/>
   </template>
 </interface>

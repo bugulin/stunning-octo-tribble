@@ -18,7 +18,6 @@ class Database(GObject.GObject):
         print('\x1b[1m[s]\x1b[0m', statement)
 
     def create_schemes(self):
-        # TODO: create index
         for manager in self._managers:
             self._conn.executescript(
                 f'CREATE TABLE {manager.scheme};'
