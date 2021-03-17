@@ -6,6 +6,7 @@
     <property name="window-position">center</property>
     <property name="default-width">640</property>
     <property name="default-height">480</property>
+    <property name="icon">data/icon.png</property>
     <signal name="destroy" handler="on_destroy" swapped="no"/>
     <child type="titlebar">
       <object class="GtkHeaderBar">
@@ -44,7 +45,7 @@
               <object class="GtkImage">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="icon-name">calendar</property>
+                <property name="icon-name">x-office-calendar</property>
               </object>
             </child>
           </object>

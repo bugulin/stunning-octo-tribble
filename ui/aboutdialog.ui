@@ -7,10 +7,10 @@
     <property name="modal">True</property>
     <property name="type-hint">dialog</property>
     <property name="program-name">Stunning OctoTribble</property>
-    <property name="version">0.1</property>
+    <property name="version">0.2</property>
     <property name="website">https://github.com/bugulin/stunning-octo-tribble</property>
     <property name="authors">Petr Borňás</property>
-    <property name="logo-icon-name">calendar</property>
+    <property name="logo">data/icon.png</property>
     <property name="license-type">gpl-3-0</property>
     <signal name="response" handler="on_response"/>
   </template>

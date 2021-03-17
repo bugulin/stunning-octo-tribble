@@ -33,7 +33,6 @@ class AppWindow(Gtk.ApplicationWindow):
     def update_status(self, db, gparam=None):
         '''Deaktivuje tlačítko 'Uložit', pokud není co uložit'''
 
-        print('\x1b[1m[i]\x1b[0m', 'Database saved:', db.saved)
         self._button_save.set_sensitive(not db.saved)
 
     def reload_views(self):

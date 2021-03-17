@@ -12,10 +12,6 @@ class Database(GObject.GObject):
     def __init__(self, db_path: str):
         super().__init__()
         self._conn = sqlite3.connect(db_path)
-        self._conn.set_trace_callback(self.debug)
-
-    def debug(self, statement):
-        print('\x1b[1m[s]\x1b[0m', statement)
 
     def create_schemes(self):
         for manager in self._managers:
@@ -37,5 +33,4 @@ class Database(GObject.GObject):
         self.saved = True
 
     def quit(self):
-        print('\x1b[1m[d]\x1b[0m', 'Closing db connection')
         self._conn.close()

@@ -21,12 +21,13 @@ class WorkersView(Gtk.Box):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.connect('realize', self._set_workers)
-        self._handler_id = self._selection.connect('changed', self.on_selection_changed)
+        self.connect('realize', self._setup)
 
-    def _set_workers(self, widget):
+    def _setup(self, widget):
         db = self.get_toplevel().get_application().database
         self._workers = db.workers
+        self._handler_id = self._selection.connect(
+            'changed', self.on_selection_changed)
         self.emit('reload')
 
     def do_reload(self):
@@ -47,7 +48,8 @@ class WorkersView(Gtk.Box):
         if response == Gtk.ResponseType.OK:
             uid = self._workers.create(**data)
             worker = self._workers.get(uid).fetchone()
-            treeiter = self._store.append((worker[0], '{1} {2}'.format(*worker)))
+            treeiter = self._store.append(
+                (worker[0], '{2} {1}'.format(*worker)))
             self._selection.select_iter(treeiter)
 
     @Gtk.Template.Callback()
@@ -68,7 +70,7 @@ class WorkersView(Gtk.Box):
         if response == Gtk.ResponseType.OK:
             self._workers.update(uid, **data)
             worker = self._workers.get(uid).fetchone()
-            model.set(treeiter, (0, 1), (worker[0], '{1} {2}'.format(*worker)))
+            model.set(treeiter, (0, 1), (worker[0], '{2} {1}'.format(*worker)))
 
     @Gtk.Template.Callback()
     def on_remove_worker(self, button):
@@ -80,7 +82,6 @@ class WorkersView(Gtk.Box):
 
     def on_selection_changed(self, selection):
         model, treeiter = selection.get_selected()
-        print('\x1b[1m[w]\x1b[0m', 'Selection changed to', treeiter)
         if treeiter is None:
             self.current_worker = -1
             self._button_edit.set_sensitive(False)
@@ -89,4 +90,5 @@ class WorkersView(Gtk.Box):
             self.current_worker = model[treeiter][0]
             self._button_edit.set_sensitive(True)
             self._button_remove.set_sensitive(True)
-            self._selection.get_tree_view().scroll_to_cell(model.get_path(treeiter))
+            self._selection.get_tree_view().scroll_to_cell(
+                model.get_path(treeiter))

@@ -10,9 +10,9 @@
     <property name="window-position">center-on-parent</property>
     <signal name="response" handler="on_response"/>
     <child type="action">
-      <object class="GtkButton" id="cancel">
+      <object class="GtkButton" id="close">
         <property name="visible">True</property>
-        <property name="label" translatable="yes">Zrušit</property>
+        <property name="label" translatable="yes">Zavřít</property>
         <style>
           <class name="action"/>
         </style>
@@ -145,7 +145,7 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="cancel">cancel</action-widget>
+      <action-widget response="close">close</action-widget>
       <action-widget response="ok" default="true">_ok_button</action-widget>
     </action-widgets>
   </template>
