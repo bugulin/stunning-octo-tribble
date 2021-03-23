@@ -28,6 +28,8 @@ Program se spouští souborem `main.py`.
 
 Podporované roky jsou jen 1 až 9998 kvůli omezení pythonního modulu `datetime` a datového typu v `sqlite3`.
 
+Bohužel některá grafická prostředí ignorují ikonu okna nastavenou samotným programem, takže po spuštění se může aplikace zobrazovat s výchozí ikonou (např. ozubené kolečko). Podobně jsou na tom i ilustrační ikony, které v některých ikonových tématech nejsou dostupné, takže se místo nich zobrazuje např. `<!>`.
+
 
 ## Zásluhy
 
